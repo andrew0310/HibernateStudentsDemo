@@ -1,18 +1,19 @@
 package com.java17.students;
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.List;
 
-@Entity
-@Data
+@Entity         // <-- Hibernate
+@Data           // <-- Lombok
+@ToString(exclude = {"oceny"})
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class Student {
+public class Student extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,4 +24,14 @@ public class Student {
     private String imie;
     private String nazwisko;
     private String indeks;
+
+    //one (this class object) to many (some class Objects below)
+    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    private List<Ocena> oceny;
+
+    @ManyToMany(mappedBy = "listaStudentow", fetch = FetchType.LAZY)
+    private List<Teacher> listaNauczycieli;
+
+    @CreationTimestamp
+    private LocalDate date;
 }
